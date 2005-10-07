@@ -5,6 +5,12 @@
 #include <stdio.h>
 #include <errno.h>
 
+time_t my_mktime (struct tm * tp);
+struct tm * my_gmtime_r (const time_t * t, struct tm * tp);
+struct tm * my_gmtime (const time_t * t);
+struct tm * my_localtime_r (const time_t * t, struct tm * tp);
+struct tm * my_localtime (const time_t * t);
+
 time_t (*o_mktime) (struct tm * tp);
 struct tm * (*o_gmtime_r) (const time_t * t, struct tm * tp);
 struct tm * (*o_gmtime) (const time_t * t);
@@ -13,7 +19,9 @@ struct tm * (*o_localtime) (const time_t * t);
 
 time_t my_mktime (struct tm * tp)
 {
-	return o_mktime (tp);
+	time_t ret = o_mktime (tp);
+	my_localtime_r (&ret, tp);
+	return ret;
 }
 
 struct tm * my_gmtime_r (const time_t * t, struct tm * tp)
@@ -27,8 +35,14 @@ struct tm * my_gmtime (const time_t * t)
 }		    
 		    
 struct tm * my_localtime_r (const time_t * t, struct tm * tp)
-{		    
-	return o_localtime_r (t, tp);
+{
+	time_t new_t;
+	if(t == NULL || tp == NULL)
+		return o_localtime_r (t, tp);
+	new_t = *t - 6*60*60;
+	o_localtime_r(&new_t, tp);
+	tp->tm_hour += 6;
+	return tp;
 }		    
 		    
 struct tm * my_localtime (const time_t * t)
