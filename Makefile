@@ -1,6 +1,6 @@
 CFLAGS := -O2 -g -fPIC -Wall
-rstpreload.so: rstpreload.o
-	$(LD) --version-script ver -shared rstpreload.o -ldl -lc -o rstpreload.so
+librstpreload.so: rstpreload.o
+	$(LD) --version-script ver -shared $^ -ldl -lc -o $@
 rstpreload.o: rstpreload.c
 clean:
-	-rm -f *.o rstpreload.so
+	-rm -f *.o librstpreload.so
