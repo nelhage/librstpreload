@@ -1,0 +1,36 @@
+Building and installing librstpreload
+-------------------------------------
+    make && sudo make install
+will install `librstpreload.so' into /usr/local/lib/librstpreload.so
+
+Using librstpreload
+-------------------
+To run a program with librstpreload, use
+    LD_PRELOAD=/usr/local/lib/librstpreload.so <program>
+Assuming the program makes use of localtime(), it should support
+Random Standard Time when invoked this way. I reccomend you be careful
+about using it indiscriminately: Things such as crontabs or outgoing
+mail headers probably shouldn't be using RST.
+
+Making the gnome applet clock RST-compliant
+-------------------------------------------
+Short version (with Ubuntu ``Hoary Hedgehog'' for me, at least):
+# dpkg-divert --rename --add /usr/lib/gnome-panel/clock-applet
+# cp clock-applet.sh /usr/lib/gnome-panel/clock-applet
+- Restart the clock applet
+
+Long version:
+(1) Locate your gnome-panel/clock-applet binary
+	It's located in /usr/lib/gnome-panel/clock-applet for me. You
+	should be able to find it with a `locate' or by grepping `ps'.
+	
+(2) Move the binary aside to clock-applet.distrib
+	If you're not using debian, move it manually, otherwise do:
+	# dpkg --rename --new /path/to/gnome-panel/clock-applet
+
+(3) Move clock-applet.sh to wherever clock-applet was. e.g:
+	# mv clock-applet.sh /usr/lib/gnome-panel/clock-applet
+
+(4) Restart the clock applet
+	Removing it from the panel and readding it will work, or you can
+	kill it and click `restart' when prompted by gnome.
