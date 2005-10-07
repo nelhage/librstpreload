@@ -1,0 +1,10 @@
+GLIBC_2.0 {
+    global:
+        mktime;
+		gmtime_r;
+		gmtime;
+		localtime_r;
+		localtime;
+    local:
+        *;
+};
