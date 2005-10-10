@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <errno.h>
 
+void make_rst (struct tm * tp);
 time_t my_mktime (struct tm * tp);
 struct tm * my_gmtime_r (const time_t * t, struct tm * tp);
 struct tm * my_gmtime (const time_t * t);
