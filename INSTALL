@@ -12,25 +12,33 @@ Random Standard Time when invoked this way. I reccomend you be careful
 about using it indiscriminately: Things such as crontabs or outgoing
 mail headers probably shouldn't be using RST.
 
-Making the gnome applet clock RST-compliant
+Using `mkrst'
 -------------------------------------------
-Short version (with Ubuntu ``Hoary Hedgehog'' for me, at least):
-# dpkg-divert --rename --add /usr/lib/gnome-panel/clock-applet
-# cp clock-applet.sh /usr/lib/gnome-panel/clock-applet
-- Restart the clock applet
+`make install' will install a `mkrst' script that can be used to
+replace any application with a shell script that invokes the original
+executable with LD_PRELOAD set appropriately. It's also Debian-aware,
+so that if you're running on a Debian system, it will attempt to
+dpkg-divert the original executable, so that dpkg knows it has moved.
 
-Long version:
-(1) Locate your gnome-panel/clock-applet binary
-	It's located in /usr/lib/gnome-panel/clock-applet for me. You
-	should be able to find it with a `locate' or by grepping `ps'.
-	
-(2) Move the binary aside to clock-applet.distrib
-	If you're not using debian, move it manually, otherwise do:
-	# dpkg --rename --new /path/to/gnome-panel/clock-applet
+To use it:
 
-(3) Move clock-applet.sh to wherever clock-applet was. e.g:
-	# mv clock-applet.sh /usr/lib/gnome-panel/clock-applet
+mkrst --make-rst $EXE
 
-(4) Restart the clock applet
-	Removing it from the panel and readding it will work, or you can
-	kill it and click `restart' when prompted by gnome.
+Will move $EXE to $EXE.distrib, and copy a shell script to $EXE that
+invokes the original file with LD_PRELOAD set.
+
+mkrst --remove $EXE
+
+Will reverse the effects of mkrst --make-rst
+
+mkrst --run $EXE ARGS
+
+Will execute $EXE with the given arguments with LD_PRELOAD set, but
+not change anything on disk.
+
+Example:
+
+sudo mkrst --make-rst /usr/lib/gnome-panel/clock-applet
+
+Will convert the gnome clock applet to RST, assuming it's installed in
+the same place my system puts it.
