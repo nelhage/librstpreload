@@ -116,6 +116,8 @@ if [ ! -x "$PROG" ]; then
 	fi
 fi
 
+PROG=$(readlink -f "$(dirname "$PROG")")/$(basename "$PROG")
+
 DEBIAN=0
 if type "dpkg" &>/dev/null; then
 	DEBIAN=1
