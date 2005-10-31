@@ -4,7 +4,7 @@ RUNRST=/usr/local/bin/rst-run
 
 is_rst()
 {
-	[ -L "$1" -a `readlink "$1"` = "$RUNRST" ];
+	[ -L "$1" ] && [ `readlink "$1"` = "$RUNRST" ]
 }
 
 is_debian()
@@ -57,8 +57,8 @@ make_rst ()
 		exit 1
 	fi
 	
-	divert "$EXE";
-	ln -s "$RUNRST" "$EXE";
+	divert "$EXE"
+	ln -s "$RUNRST" "$EXE"
 	echo "$EXE successfully RST-ified." >&2
 }
 
