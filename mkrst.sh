@@ -4,44 +4,44 @@ RUNRST=/usr/local/bin/rst-run.sh
 
 is_rst()
 {
-	grep -Fq 'librstpreload.so' $1
+	grep -Fq 'librstpreload.so' "$1"
 }
 
 is_debian()
 {
-	if [ ! $DEBIAN ]; then
-		return 1;
+	if [ ! "$DEBIAN" ]; then
+		return 1
 	fi
 	dpkg -S "$1"
 }
 
 is_diverted()
 {
-	if [ ! $DEBIAN ]; then
-		return 1;
+	if [ ! "$DEBIAN" ]; then
+		return 1
 	fi
 	
-	[ -n "`dpkg-divert --list "$1"`" ];
+	[ -n "`dpkg-divert --list "$1"`" ]
 }
 
 divert()
 {
 	if [ ! -w "$1" ]; then
-		echo "ERROR: $1 is not writable.";
-		exit 1;
+		echo "ERROR: $1 is not writable." >&2
+		exit 1
 	fi
 
 	if [ ! "$DEBIAN" ]; then
-		mv "$1" "$1.distrib";
+		mv "$1" "$1.distrib"
 	else
-		if [ dpkg -S "$1" > /dev/null 2>&1 ]; then
-			if ! dpkg-divert --add --rename $1 > /dev/null 2>&1; then
-				echo "Error running dpkg-divert -- try again as root?";
-				exit 1;
-			fi;
+		if [ dpkg -S "$1" &>/dev/null ]; then
+			if ! dpkg-divert --add --rename "$1" &>/dev/null; then
+				echo "Error running dpkg-divert -- try again as root?" >&2
+				exit 1
+			fi
 		else
-			mv "$1" "$1.distrib";
-		fi;
+			mv "$1" "$1.distrib"
+		fi
 	fi
 }
 
@@ -49,49 +49,49 @@ make_rst ()
 {
 	EXE=$1
 	if is_rst "$EXE"; then
-		echo "ERROR: $EXE is already RST-ized."
-		exit 1;
-	fi;
+		echo "ERROR: $EXE is already RST-ized." >&2
+		exit 1
+	fi
 	if is_diverted "$EXE"; then
-		echo "ERROR: $EXE is already dpkg-divert'd, bailing."
-		exit 1;
+		echo "ERROR: $EXE is already dpkg-divert'd, bailing." >&2
+		exit 1
 	fi
 	
-	divert "$EXE";
-	cp "$RUNRST" "$EXE";
-	echo "$EXE successfully RST-ified."
+	divert "$EXE"
+	cp -a "$RUNRST" "$EXE"
+	echo "$EXE successfully RST-ified." >&2
 }
 
 remove_rst ()
 {
 	EXE=$1
 	if ! is_rst "$EXE"; then
-		echo "$EXE is not RST-ified.";
+		echo "$EXE is not RST-ified." >&2
 		exit 1
 	fi
-	rm "$EXE";
+	rm "$EXE"
 	if is_diverted "$EXE"; then
-		if dpkg-divert --remove --rename "$EXE" > /dev/null 2>&1; then
-			echo "Error running dpkg-divert -- try again as root?";
-			exit 1;
+		if dpkg-divert --remove --rename "$EXE" &>/dev/null; then
+			echo "Error running dpkg-divert -- try again as root?" >&2
+			exit 1
 		fi
 	else
-		mv "$EXE.distrib" "$EXE";
-	fi;
-	echo "$EXE de-RST-ified."
+		mv "$EXE.distrib" "$EXE"
+	fi
+	echo "$EXE de-RST-ified." >&2
 }
 
 usage()
 {
-	echo "Usage: mkrst [action] <file>"
-	echo "ACTION is one of:"
-	echo "		--make-rst (default)"
-	echo "		--remove"
-	echo "		--run"
-	exit 1;
+	echo "Usage: mkrst [action] <file>" >&2
+	echo "ACTION is one of:" >&2
+	echo "		--make-rst (default)" >&2
+	echo "		--remove" >&2
+	echo "		--run" >&2
+	exit 1
 }
 
-ACTION=$1;
+ACTION=$1
 case "$ACTION" in
 	--*)
 		shift
@@ -103,30 +103,30 @@ esac
 
 PROG=$1
 if [ -z "$PROG" ]; then
-	usage;
+	usage
 fi
 
 if [ ! -x "$PROG" ]; then
-	if which "$PROG" > /dev/null 2>&1; then
-		PROG=`which "$PROG"`;
+	if which "$PROG" &>/dev/null; then
+		PROG=`which "$PROG"`
 	else
-		echo "Unable to find $PROG!";
-		usage;
-		exit 1;
+		echo "Unable to find $PROG!" >&2
+		usage
+		exit 1
 	fi
-fi;
+fi
 
 DEBIAN=0
-if type "dpkg" > /dev/null 2>&1; then
+if type "dpkg" &>/dev/null; then
 	DEBIAN=1
-fi;
+fi
 
 case "$ACTION" in
 	--make-rst)
-		make_rst "$PROG";
+		make_rst "$PROG"
 		;;
 	--remove)
-		remove_rst "$PROG";
+		remove_rst "$PROG"
 		;;
 	--run)
 		LD_PRELOAD=/usr/local/lib/librstpreload.so exec "$@"
