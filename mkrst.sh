@@ -9,7 +9,7 @@ is_rst()
 
 is_debian()
 {
-	if [ ! "$DEBIAN" ]; then
+	if [ "$DEBIAN" -eq 0 ]; then
 		return 1
 	fi
 	dpkg -S "$1"
@@ -17,7 +17,7 @@ is_debian()
 
 is_diverted()
 {
-	if [ ! "$DEBIAN" ]; then
+	if [ "$DEBIAN" -eq 0 ]; then
 		return 1
 	fi
 	
@@ -31,7 +31,7 @@ divert()
 		exit 1
 	fi
 
-	if [ ! "$DEBIAN" ]; then
+	if [ "$DEBIAN" -eq 0 ]; then
 		mv "$1" "$1.distrib"
 	else
 		if [ dpkg -S "$1" &>/dev/null ]; then
