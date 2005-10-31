@@ -7,14 +7,10 @@
 
 void make_rst (struct tm * tp);
 time_t my_mktime (struct tm * tp);
-struct tm * my_gmtime_r (const time_t * t, struct tm * tp);
-struct tm * my_gmtime (const time_t * t);
 struct tm * my_localtime_r (const time_t * t, struct tm * tp);
 struct tm * my_localtime (const time_t * t);
 
 time_t (*o_mktime) (struct tm * tp);
-struct tm * (*o_gmtime_r) (const time_t * t, struct tm * tp);
-struct tm * (*o_gmtime) (const time_t * t);
 struct tm * (*o_localtime_r) (const time_t * t, struct tm * tp);
 struct tm * (*o_localtime) (const time_t * t);
 
@@ -34,16 +30,6 @@ time_t my_mktime (struct tm * tp)
 	return ret;
 }
 
-struct tm * my_gmtime_r (const time_t * t, struct tm * tp)
-{		    
-	return o_gmtime_r (t, tp);
-}		    
-		    
-struct tm * my_gmtime (const time_t * t)
-{		    
-	return o_gmtime (t);
-}		    
-		    
 struct tm * my_localtime_r (const time_t * t, struct tm * tp)
 {
 	if(t == NULL || tp == NULL)
@@ -73,17 +59,6 @@ void _init()
 		fprintf(stderr, "rstpreload: dlsym: %s\n", dlerror());
 		exit(2);
 	}
-	o_gmtime_r = dlsym(RTLD_NEXT, "gmtime_r");
-	if(!o_gmtime_r) {
-		fprintf(stderr, "rstpreload: dlsym: %s\n", dlerror());
-		exit(2);		
-	}
-
-	o_gmtime = dlsym(RTLD_NEXT, "gmtime");
-	if(!o_gmtime) {
-		fprintf(stderr, "rstpreload: dlsym: %s\n", dlerror());
-		exit(2);		
-	}
 
 	o_localtime_r = dlsym(RTLD_NEXT, "localtime_r");
 	if(!o_localtime_r) {
@@ -99,7 +74,5 @@ void _init()
 }
 
 __asm(".symver my_mktime,mktime@@GLIBC_2.0");
-__asm(".symver my_gmtime_r,gmtime_r@@GLIBC_2.0");
-__asm(".symver my_gmtime,gmtime@@GLIBC_2.0");
 __asm(".symver my_localtime_r,localtime_r@@GLIBC_2.0");
 __asm(".symver my_localtime,localtime@@GLIBC_2.0");
