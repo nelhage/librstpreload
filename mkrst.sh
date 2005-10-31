@@ -1,10 +1,10 @@
 #!/bin/sh
 
-RUNRST=/usr/local/bin/rst-run.sh
+RUNRST=/usr/local/bin/rst-run
 
 is_rst()
 {
-	grep -Fq 'librstpreload.so' "$1"
+	[ -L "$1" -a `readlink "$1"` = "$RUNRST" ];
 }
 
 is_debian()
@@ -47,7 +47,7 @@ divert()
 
 make_rst ()
 {
-	EXE=$1
+	EXE="$1"
 	if is_rst "$EXE"; then
 		echo "ERROR: $EXE is already RST-ized." >&2
 		exit 1
@@ -57,8 +57,8 @@ make_rst ()
 		exit 1
 	fi
 	
-	divert "$EXE"
-	cp -a "$RUNRST" "$EXE"
+	divert "$EXE";
+	ln -s "$RUNRST" "$EXE";
 	echo "$EXE successfully RST-ified." >&2
 }
 
