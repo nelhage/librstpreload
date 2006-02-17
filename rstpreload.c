@@ -4,24 +4,11 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <errno.h>
+#include "rst.h"
 
-void make_rst (struct tm * tp);
 time_t my_mktime (struct tm * tp);
 struct tm * my_localtime_r (const time_t * t, struct tm * tp);
 struct tm * my_localtime (const time_t * t);
-
-time_t (*o_mktime) (struct tm * tp);
-struct tm * (*o_localtime_r) (const time_t * t, struct tm * tp);
-struct tm * (*o_localtime) (const time_t * t);
-
-void make_rst (struct tm * tp)
-{
-	if(tp->tm_hour < 6) {
-		tp->tm_mday--;
-		o_mktime(tp);
-		tp->tm_hour += 24;
-	}
-}
 
 time_t my_mktime (struct tm * tp)
 {
