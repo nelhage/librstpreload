@@ -6,7 +6,7 @@ librstpreload.so: rstpreload.o rst.o
 dsttest: dsttest.o rst.o
 
 clean:
-	-rm -f *.o librstpreload.so dsttest
+	-rm -f *.o librstpreload.so dsttest *~
 
 install: librstpreload.so rst-run.sh mkrst.sh
 	install -D -m a=rx,u=rwx -p librstpreload.so /usr/local/lib/librstpreload.so
