@@ -11,4 +11,4 @@ do
     FILE=$(readlink -f "$(dirname "$LINK")")/$(basename "$LINK")
 done
 
-LD_PRELOAD=/usr/local/lib/librstpreload.so exec -a "$0" "$FILE".distrib "$@"
+LD_PRELOAD=librstpreload.so exec "$FILE".distrib "$@"

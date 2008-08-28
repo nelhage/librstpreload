@@ -131,5 +131,5 @@ case "$ACTION" in
 		remove_rst "$PROG"
 		;;
 	--run)
-		LD_PRELOAD=/usr/local/lib/librstpreload.so exec "$@"
+		LD_PRELOAD=librstpreload.so exec "$@"
 esac
