@@ -34,7 +34,7 @@ divert()
 	if [ "$DEBIAN" -eq 0 ]; then
 		mv "$1" "$1.distrib"
 	else
-		if [ dpkg -S "$1" &>/dev/null ]; then
+		if dpkg -S "$1" &>/dev/null; then
 			if ! dpkg-divert --add --rename "$1" &>/dev/null; then
 				echo "Error running dpkg-divert -- try again as root?" >&2
 				exit 1
