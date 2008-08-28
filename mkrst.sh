@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 RUNRST=/usr/local/bin/rst-run
 
