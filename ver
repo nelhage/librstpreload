@@ -3,6 +3,8 @@ GLIBC_2.0 {
         mktime;
 		localtime_r;
 		localtime;
+		ctime_r;
+		ctime;
     local:
         *;
 };

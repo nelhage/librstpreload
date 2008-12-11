@@ -9,6 +9,8 @@
 time_t my_mktime (struct tm * tp);
 struct tm * my_localtime_r (const time_t * t, struct tm * tp);
 struct tm * my_localtime (const time_t * t);
+char * my_ctime_r (const time_t * t, char * buf);
+char * my_ctime (const time_t * t);
 
 time_t my_mktime (struct tm * tp)
 {
@@ -38,6 +40,17 @@ struct tm * my_localtime (const time_t * t)
 	return ret;
 }
 
+char * my_ctime_r (const time_t * t, char * buf)
+{
+	struct tm tm;
+	return asctime_r (my_localtime_r (t, &tm), buf);
+}
+
+char * my_ctime (const time_t * t)
+{
+	return asctime (my_localtime (t));
+}
+
 
 void _init()
 {
@@ -63,3 +76,5 @@ void _init()
 __asm(".symver my_mktime,mktime@@GLIBC_2.0");
 __asm(".symver my_localtime_r,localtime_r@@GLIBC_2.0");
 __asm(".symver my_localtime,localtime@@GLIBC_2.0");
+__asm(".symver my_ctime_r,ctime_r@@GLIBC_2.0");
+__asm(".symver my_ctime,ctime@@GLIBC_2.0");
